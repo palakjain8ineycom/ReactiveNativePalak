@@ -1,10 +1,9 @@
-
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Image } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 // import { AntDesign } from "@expo/vector-icons";
-import 'react-native-gesture-handler';
-
+import "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
 
 console.reportErrorsAsExceptions = false;
 
@@ -21,6 +20,7 @@ function TopBar() {
   );
 }
 
+
 function LeaveForm() {
   const [employeeNumber, setEmployeeNumber] = useState("");
   const [leaveType, setLeaveType] = useState("");
@@ -29,25 +29,27 @@ function LeaveForm() {
   const [endDate, setEndDate] = useState("");
 
   const handleSubmit = () => {
-    fetch("https://fa-equm-test-saasfaprod1.fa.ocs.oraclecloud.com/hcmRestApi/resources/11.13.18.05/absences", 
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        employeeNumber: employeeNumber,
-        leaveType: leaveType,
-        reason: reason,
-        startDate: startDate,
-        endDate: endDate,
-      }),
-    })
-      // .then((response) => response.json())
-      // .then((data) => {
-      //   Alert.alert("Your Leave has been submitted successfully");
-      // })
-      // .catch((error) => {
-      //   Alert.alert(error.message);
-      // });
+    fetch(
+      "https://fa-equm-test-saasfaprod1.fa.ocs.oraclecloud.com/hcmRestApi/resources/11.13.18.05/absences",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          employeeNumber: employeeNumber,
+          leaveType: leaveType,
+          reason: reason,
+          startDate: startDate,
+          endDate: endDate,
+        }),
+      }
+    );
+    // .then((response) => response.json())
+    // .then((data) => {
+    //   Alert.alert("Your Leave has been submitted successfully");
+    // })
+    // .catch((error) => {
+    //   Alert.alert(error.message);
+    // });
   };
 
   return (
@@ -123,16 +125,15 @@ function LeaveForm() {
           required
         />
 
-        <Button
-          title="Submit"
-          onPress={handleSubmit}
-          color="#000000"
-          // Set the color prop to the desired color
-        />
+        <Button title="Submit" onPress={handleSubmit} color="#000000" />
+        {/* <Button title="Cancel" onPress={handleSubmit} color="blue" /> */}
+        
       </View>
     </View>
   );
 }
+
+
 const styles = StyleSheet.create({
   topBar: {
     flexDirection: "column",
@@ -144,7 +145,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 70,
     height: 70,
-    marginTop: 50,
+    marginTop: 20,
   },
   title: {
     fontWeight: "bold",
@@ -185,5 +186,21 @@ const styles = StyleSheet.create({
     borderColor: "yellow",
   },
 });
-export default LeaveForm;
 
+
+// function ChatBot() {
+//   const navigation = useNavigation();
+//   const handleChatBot = () => {
+//     navigation.navigate("ChatBot");
+//   };
+//   return (
+//     <View>
+//       <Button title="ChatBot" onPress={handleChatBot} color="blue"/>
+//     </View>
+//   );
+// }
+
+
+
+// export{LeaveForm,ChatBot};
+export default LeaveForm;
