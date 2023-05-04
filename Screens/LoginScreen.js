@@ -1,5 +1,6 @@
 import React from "react";
-import { View, TextInput, TouchableOpacity, Text, Image, StyleSheet } from "react-native";
+import { useState } from "react";
+import { Animated, View, TextInput, TouchableOpacity, Text, Image, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import "react-native-gesture-handler";
 
@@ -10,10 +11,40 @@ function Logo() {
 }
 
 export default function LoginScreen() {
+  const [username, setUserName] = useState('');
+  const [password, setPassword] = useState('');
+
   const navigation = useNavigation();
 
-  const handleLogin = () => {
-    navigation.navigate("Home");
+  const handleLogin = (event) => {
+    event.preventDefault();
+
+    fetch('http://127.0.0.1:5000/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: username,
+        password: password
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+      if (data["status"] == "correct") {
+        console.log(data)
+        console.log(username)
+        console.log(password)
+        navigation.navigate("Home");
+      }
+      else {
+        alert("Wrong username or password")
+      }
+    })
+      // .then(data => {
+      //   alert("Your Leave has been submitted successfully");
+      //   navigation.navigate("Home");
+      // })
+      // .catch(error => alert(error))
+    //navigation.navigate("Home");
   };
 
   return (
@@ -34,6 +65,8 @@ export default function LoginScreen() {
           backgroundColor: "#fff",
         }}
         placeholder="Username"
+        value={username}
+        onChangeText={setUserName}
       />
       <TextInput
         style={{
@@ -48,6 +81,8 @@ export default function LoginScreen() {
           backgroundColor: "#fff",
         }}
         placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
         secureTextEntry={true}
       />
       <TouchableOpacity
