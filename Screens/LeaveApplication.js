@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Animated, View, Text, TextInput, Button, StyleSheet, Image } from "react-native";
+import {
+  Animated,
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Image,
+} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 // import { AntDesign } from "@expo/vector-icons";
 import "react-native-gesture-handler";
@@ -20,7 +28,6 @@ function TopBar() {
   );
 }
 
-
 function LeaveForm() {
   const [employeeNumber, setEmployeeNumber] = useState("");
   const [leaveType, setLeaveType] = useState("");
@@ -31,22 +38,27 @@ function LeaveForm() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    fetch('http://127.0.0.1:5000/leavepost', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    fetch("http://127.0.0.1:5000/leavepost", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         employeeNumber: employeeNumber,
         leaveType: leaveType,
         reason: reason,
         startDate: startDate,
-        endDate: endDate
-      })
-    })
-      .then(response => response.json())
-      .then(data => {
-        alert("Your Leave has been submitted successfully");
-      })
-      .catch(error => alert(error));
+        endDate: endDate,
+      }),
+    }).then((data) => {
+      if (data["status"] == "success") {
+        console.log(data);
+
+        alert("Your leave has been submitted successfully"); // navigation.navigate("Home");
+      } else {
+        console.log(data);
+
+        alert("Wrong username or password");
+      }
+    });
   };
 
   return (
@@ -124,12 +136,10 @@ function LeaveForm() {
 
         <Button title="Submit" onPress={handleSubmit} color="#000000" />
         {/* <Button title="Cancel" onPress={handleSubmit} color="blue" /> */}
-        
       </View>
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   topBar: {
@@ -184,7 +194,6 @@ const styles = StyleSheet.create({
   },
 });
 
-
 // function ChatBot() {
 //   const navigation = useNavigation();
 //   const handleChatBot = () => {
@@ -196,8 +205,6 @@ const styles = StyleSheet.create({
 //     </View>
 //   );
 // }
-
-
 
 // export{LeaveForm,ChatBot};
 export default LeaveForm;
