@@ -1,9 +1,13 @@
+
 import React, { useState } from "react";
-import { Animated, View, Text, TextInput, Button, StyleSheet, Image } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, Image,TouchableOpacity, Modal } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 // import { AntDesign } from "@expo/vector-icons";
-import "react-native-gesture-handler";
-import { useNavigation } from "@react-navigation/native";
+import 'react-native-gesture-handler';
+import { MaterialIcons } from "@expo/vector-icons";
+import Calendar from "react-native-calendars/src/calendar";
+
+
 
 console.reportErrorsAsExceptions = false;
 
@@ -20,33 +24,45 @@ function TopBar() {
   );
 }
 
-
 function LeaveForm() {
+  const [showStartModal, setShowStartModal] = useState(false);
+  const [showEndModal, setShowEndModal] = useState(false);
   const [employeeNumber, setEmployeeNumber] = useState("");
   const [leaveType, setLeaveType] = useState("");
   const [reason, setReason] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
 
-    fetch('http://127.0.0.1:5000/leavepost', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+  const renderArrow = (direction) => (
+    <MaterialIcons
+      name={direction === "left" ? "chevron-left" : "chevron-right"}
+      size={30}
+      color="black"
+    />
+  );
+
+
+  const handleSubmit = () => {
+    fetch("https://fa-equm-test-saasfaprod1.fa.ocs.oraclecloud.com/hcmRestApi/resources/11.13.18.05/absences", 
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         employeeNumber: employeeNumber,
         leaveType: leaveType,
         reason: reason,
         startDate: startDate,
-        endDate: endDate
-      })
+        endDate: endDate,
+      }),
     })
-      .then(response => response.json())
-      .then(data => {
-        alert("Your Leave has been submitted successfully");
-      })
-      .catch(error => alert(error));
+      // .then((response) => response.json())
+      // .then((data) => {
+      //   Alert.alert("Your Leave has been submitted successfully");
+      // })
+      // .catch((error) => {
+      //   Alert.alert(error.message);
+      // });
   };
 
   return (
@@ -103,34 +119,57 @@ function LeaveForm() {
           placeholder="Enter leave reason"
           required
         />
+<Text style={styles.label}>Start Date</Text>
+<TouchableOpacity
+        onPress={() => setShowStartModal(true)}
+        style={styles.selectDateButton}
+      >
+        <Text style={styles.selectDateButtonText}>
+          {startDate ? `${startDate}` : "Enter the Start Date"}
+        </Text>
+      </TouchableOpacity>
+<Text style={styles.label}>End Date</Text>
+      <TouchableOpacity
+        onPress={() => setShowEndModal(true)}
+        style={styles.selectDateButton}
+      >
+        <Text style={styles.selectDateButtonText}>
+          {endDate ? ` ${endDate}` : "Enter the End Date "}
+        </Text>
+      </TouchableOpacity>
 
-        <Text style={styles.label}>Start Date</Text>
-        <TextInput
-          style={styles.input}
-          value={startDate}
-          onChangeText={setStartDate}
-          placeholder="Select start date"
-          required
+
+
+        <Button
+          title="Submit"
+          onPress={handleSubmit}
+          color="#000000"
+          // Set the color prop to the desired color
         />
-
-        <Text style={styles.label}>End Date</Text>
-        <TextInput
-          style={styles.input}
-          value={endDate}
-          onChangeText={setEndDate}
-          placeholder="Select end date"
-          required
+<Modal visible={showStartModal} animationType="fade">
+        <Calendar
+          style={styles.calendar}
+          renderArrow={renderArrow}
+          onDayPress={(day) => {
+            setStartDate(day.dateString);
+            setShowStartModal(false);
+          }}
         />
-
-        <Button title="Submit" onPress={handleSubmit} color="#000000" />
-        {/* <Button title="Cancel" onPress={handleSubmit} color="blue" /> */}
-        
+      </Modal>
+      <Modal visible={showEndModal} animationType="fade">
+        <Calendar
+          style={styles.calendar}
+          renderArrow={renderArrow}
+          onDayPress={(day) => {
+            setEndDate(day.dateString);
+            setShowEndModal(false);
+          }}
+        />
+      </Modal>
       </View>
     </View>
   );
 }
-
-
 const styles = StyleSheet.create({
   topBar: {
     flexDirection: "column",
@@ -142,7 +181,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 70,
     height: 70,
-    marginTop: 20,
+    marginTop: 50,
   },
   title: {
     fontWeight: "bold",
@@ -178,26 +217,43 @@ const styles = StyleSheet.create({
   submitBtn: {
     padding: 8,
     borderRadius: 4,
+
   },
   inputFocused: {
     borderColor: "yellow",
   },
+  calendar: {
+    borderRadius:100,
+    borderColor:"black",
+    elevation: 4,
+    margin: 50,
+    height: 10,
+    width: 250,
+    alignContent:"center",
+    fontWeight: 'bold',
+  },
+  Picker:{
+    height: 50,
+    width: "100%",
+    borderColor: "gray",
+    marginTop: 20,
+    padding: 10,
+
+  },
+  selectDateButton: {
+    borderWidth: 1,
+    borderColor: "#000000",
+    borderRadius: 4,
+    padding: 8,
+    marginBottom: 16,
+    color: "#575756ff",
+
+  },
+  selectDateButtonText: {
+    color: "black",
+    fontSize: 15,
+
+  },
 });
-
-
-// function ChatBot() {
-//   const navigation = useNavigation();
-//   const handleChatBot = () => {
-//     navigation.navigate("ChatBot");
-//   };
-//   return (
-//     <View>
-//       <Button title="ChatBot" onPress={handleChatBot} color="blue"/>
-//     </View>
-//   );
-// }
-
-
-
-// export{LeaveForm,ChatBot};
 export default LeaveForm;
+
