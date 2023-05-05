@@ -5,6 +5,7 @@ import HomeScreen from './Screens/HomeScreen';
 import LoginScreen from './Screens/LoginScreen';
 import ChatBot from './Screens/ChatBot';
 import LeaveApplication from './Screens/LeaveApplication';
+import LeaveList from './Screens/LeaveList';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,7 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Leave Application" component={LeaveApplication} />
         <Stack.Screen name="ChatBot" component={ChatBot} />
+        <Stack.Screen name="Leave List" component={LeaveList} />
       </Stack.Navigator>
     </NavigationContainer>
   );

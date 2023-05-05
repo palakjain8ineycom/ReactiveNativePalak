@@ -10,6 +10,7 @@ function TopBar() {
     <View style={styles.topBar}>
       <Logo />
       <Text style={styles.title}>Leave Application</Text>
+      <Text style={styles.title}>My Leaves</Text>
     </View>
   );
 }
@@ -20,8 +21,11 @@ const HomeScreen = ({ navigation }) => {
       <TouchableOpacity style={styles.tile} onPress={() => navigation.navigate('Leave Application')}>
         <Text style={styles.tileText}>Leave Application</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.tile} onPress={() => navigation.navigate('Leave List')}>
+        <Text style={styles.tileText}>My Leaves</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={[styles.tile, styles.chatbotTile]} onPress={() => navigation.navigate('ChatBot')}>
-        <Image source={require("./assets/splash.png")} style={styles.chatbotImage} />
+        <Image source={require("./assets/cbot.png")} style={styles.chatbotImage} />
       </TouchableOpacity>
     </View>
   );
@@ -40,6 +44,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 40,
     marginBottom: 20,
+    color:"#cccccc",
   },
   logo: {
     width: 50,
@@ -54,7 +59,7 @@ const styles = StyleSheet.create({
   tile: {
     width: '80%',
     height: 150,
-    backgroundColor: '#fff',
+    backgroundColor: '#ffe600',
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
@@ -71,13 +76,13 @@ const styles = StyleSheet.create({
   tileText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#1E90FF',
+    color: 'black',
   },
   chatbotTile: {
     position: 'absolute',
     bottom: 20,
     right: 20,
-    backgroundColor: '#1E90FF',
+    backgroundColor: '#ffe600',
     borderRadius: 50,
     width: 70,
     height: 70,

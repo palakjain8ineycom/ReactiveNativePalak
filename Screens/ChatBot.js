@@ -10,7 +10,7 @@ import {
 } from '@chatscope/chat-ui-kit-react';
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 
-const API_KEY = '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';
+const API_KEY = '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';
 const systemMessage = {
   role: 'system',
   content:
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
       marginRight: 10,
     },
     sendButton: {
-      backgroundColor: '#007aff',
+      backgroundColor: '#cccccc',
       borderRadius: 20,
       paddingHorizontal: 15,
       paddingVertical: 10,
