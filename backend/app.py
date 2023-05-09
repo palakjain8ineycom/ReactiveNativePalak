@@ -61,5 +61,40 @@ def handle_form_data():
     else: 
         return jsonify(response.text)
   
+@app.route('/leavelist', methods=['GET'])
+def handle_leavelist_data():
+    url = "https://fa-equm-test-saasfaprod1.fa.ocs.oraclecloud.com/hcmRestApi/resources/11.13.18.05/absences"
+    headers = {
+        'Authorization': 'Basic RVlBRE1JTi5IQ006UGFzc3dvcmRAMTIz'
+    }
+    response = requests.get(url, headers=headers)
+    data = response.json()
+
+    leave_list = [] 
+   
+    for item in data['items']:
+        absenceStatusCd = item['absenceStatusCd']
+        approvalStatusCd = item['approvalStatusCd']
+        startDate = item['startDate']
+        duration = item['duration']
+        endDate = item['endDate']
+
+        leave_item = {
+            'absenceStatusCd': absenceStatusCd,
+            'approvalStatusCd': approvalStatusCd,
+            'startDate': startDate,
+            'duration': duration,
+            'endDate': endDate
+        }
+
+        leave_list.append(leave_item)  
+    leave_list_json = json.dumps(leave_list)
+    if (response.status_code < 300 and response.status_code > 150):
+            return leave_list_json
+    
+    else: 
+        return jsonify({"status":"error"})
+
+
 if __name__ == '__main__':
-    app.run(host='192.168.29.223', port=3000, debug=True)
+    app.run(host='192.168.29.245', port=3000, debug=True)
