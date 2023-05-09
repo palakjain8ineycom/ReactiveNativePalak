@@ -1,83 +1,53 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { DataTable } from 'react-native-paper';
+import React, { useEffect, useState } from 'react';
+import { View, Text } from 'react-native';
+import { Table, Row, Cell } from 'react-native-table-component';
 
-export default function App() {
-    return (
-        
-      <View style={styles.container}>
-        <DataTable>
-          <DataTable.Header>
-            <DataTable.Title>Leaves</DataTable.Title>
-            <DataTable.Title>Start Date</DataTable.Title>
-            <DataTable.Title>End Date</DataTable.Title>
-            <DataTable.Title>Type</DataTable.Title>
-            <DataTable.Title>Reason</DataTable.Title>
-            <DataTable.Title>Status</DataTable.Title>
-          </DataTable.Header>
-  
-          <DataTable.Row>
-            <DataTable.Cell>1</DataTable.Cell>
-            <DataTable.Cell>2023-05-05</DataTable.Cell>
-            <DataTable.Cell>2023-05-05</DataTable.Cell>
-            <DataTable.Cell>Casual Leave</DataTable.Cell>
-            <DataTable.Cell>Vacation</DataTable.Cell>
-            <DataTable.Cell>Approved</DataTable.Cell>
-          </DataTable.Row>
-  
-          <DataTable.Row>
-            <DataTable.Cell>2</DataTable.Cell>
-            <DataTable.Cell>2023-05-05</DataTable.Cell>
-            <DataTable.Cell>2023-05-05</DataTable.Cell>
-            <DataTable.Cell>Casual Leave</DataTable.Cell>
-            <DataTable.Cell>Vacation</DataTable.Cell>
-            <DataTable.Cell>Approved</DataTable.Cell>
-          </DataTable.Row>
+const LeaveList = () => {
+  const [leaveData, setLeaveData] = useState([]);
 
-          <DataTable.Row>
-            <DataTable.Cell>3</DataTable.Cell>
-            <DataTable.Cell>2023-05-05</DataTable.Cell>
-            <DataTable.Cell>2023-05-05</DataTable.Cell>
-            <DataTable.Cell>Casual Leave</DataTable.Cell>
-            <DataTable.Cell>Vacation</DataTable.Cell>
-            <DataTable.Cell>Approved</DataTable.Cell>
-          </DataTable.Row>
+  useEffect(() => {
+    fetchLeaveListData();
+  }, []);
 
-          <DataTable.Row>
-            <DataTable.Cell>4</DataTable.Cell>
-            <DataTable.Cell>2023-05-05</DataTable.Cell>
-            <DataTable.Cell>2023-05-05</DataTable.Cell>
-            <DataTable.Cell>Casual Leave</DataTable.Cell>
-            <DataTable.Cell>Vacation</DataTable.Cell>
-            <DataTable.Cell>Approved</DataTable.Cell>
-          </DataTable.Row>
+  const fetchLeaveListData = async () => {
+    try {
+      const response = await fetch('http://192.168.29.245:3000/leavelist');
+      const data = await response.json();
+      setLeaveData(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-          <DataTable.Row>
-            <DataTable.Cell>5</DataTable.Cell>
-            <DataTable.Cell>2023-05-05</DataTable.Cell>
-            <DataTable.Cell>2023-05-05</DataTable.Cell>
-            <DataTable.Cell>Casual Leave</DataTable.Cell>
-            <DataTable.Cell>Vacation</DataTable.Cell>
-            <DataTable.Cell>Approved</DataTable.Cell>
-          </DataTable.Row>
+  return (
+    <View>
+      {leaveData.length > 0 ? (
+        <Table>
+          <Row
+            data={['Leaves', 'Start Date', 'End Date', 'Duration', 'Absence Status', 'Approval Status']}
+            style={{ height: 40, backgroundColor: '#f1f8ff' }}
+            textStyle={{ margin: 6, fontWeight: 'bold' }}
+          />
+          {leaveData.map((item, index) => (
+            <Row
+              key={index}
+              data={[
+                index + 1, 
+                item.startDate,
+                item.endDate,
+                item.duration,
+                item.absenceStatusCd,
+                item.approvalStatusCd,
+              ]}
+              textStyle={{ margin: 6 }}
+            />
+          ))}
+        </Table>
+      ) : (
+        <Text>Loading leave data...</Text>
+      )}
+    </View>
+  );
+};
 
-          <DataTable.Row>
-            <DataTable.Cell>6</DataTable.Cell>
-            <DataTable.Cell>2023-05-05</DataTable.Cell>
-            <DataTable.Cell>2023-05-05</DataTable.Cell>
-            <DataTable.Cell>Casual Leave</DataTable.Cell>
-            <DataTable.Cell>Vacation</DataTable.Cell>
-            <DataTable.Cell>Approved</DataTable.Cell>
-          </DataTable.Row>
-  
-        </DataTable>
-      </View>
-    );
-  }
-  
-  const styles = StyleSheet.create({
-    container: {
-      paddingTop: 100,
-      paddingHorizontal: 30,
-    },
-  });
+export default LeaveList;
