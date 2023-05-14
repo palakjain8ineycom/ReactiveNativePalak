@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { Table, Row, Cell } from 'react-native-table-component';
 
 const LeaveList = () => {
@@ -20,34 +20,39 @@ const LeaveList = () => {
   };
 
   return (
-    <View>
-      {leaveData.length > 0 ? (
-        <Table>
-          <Row
-            data={['Leaves', 'Start Date', 'End Date', 'Duration', 'Absence Status', 'Approval Status']}
-            style={{ height: 40, backgroundColor: '#f1f8ff' }}
-            textStyle={{ margin: 6, fontWeight: 'bold' }}
-          />
-          {leaveData.map((item, index) => (
+    <ScrollView horizontal={true} vertical={true}>
+      <View>
+        {leaveData.length > 0 ? (
+          <Table>
             <Row
-              key={index}
-              data={[
-                index + 1, 
-                item.startDate,
-                item.endDate,
-                item.duration,
-                item.absenceStatusCd,
-                item.approvalStatusCd,
-              ]}
-              textStyle={{ margin: 6 }}
+              data={['Start Date', 'End Date', 'Absence Reason', 'Absence Status', 'Approval Status']}
+              style={{ height: 40, backgroundColor: '#30E3CA' }}
+              textStyle={{ margin: 5, fontWeight: 'bold', textAlign: 'center' }}
+              widthArr={[100, 100, 120, 120, 120]} 
             />
-          ))}
-        </Table>
-      ) : (
-        <Text>Loading leave data...</Text>
-      )}
-    </View>
+            {leaveData.map((item, index) => (
+              <Row
+                key={index}
+                data={[
+                  item.startDate,
+                  item.endDate,
+                  item.absencereason,
+                  item.absenceStatusCd,
+                  item.approvalStatusCd,
+                ]}
+                textStyle={{ margin: 5, textAlign: 'center' }}
+                widthArr={[100, 100, 120, 120, 120]} 
+                style={{ height: 40,borderColor:'grey',borderWidth:0.5 }}
+              />
+            ))}
+          </Table>
+        ) : (
+          <Text>Loading My Leaves data...</Text>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 
 export default LeaveList;
+

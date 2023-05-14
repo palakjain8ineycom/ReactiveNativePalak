@@ -7,9 +7,14 @@ import base64
 app = Flask(__name__)
 cors = CORS(app)
 
+
+global baseurl
+baseurl="https://fa-equm-test-saasfaprod1.fa.ocs.oraclecloud.com"
+
 @app.route('/login', methods=['POST'])
 def handle_login_data():
     data = request.get_json()
+    global username 
     username = data['username']
     password = data['password']
     ##base64 encode for username and password to authenticate
@@ -19,7 +24,7 @@ def handle_login_data():
     global baseencode
     baseencode = base64_bytes.decode("ascii")
 
-    url = "https://fa-equm-test-saasfaprod1.fa.ocs.oraclecloud.com/hcmRestApi/resources/11.13.18.05/absences"
+    url = str(baseurl)+"/hcmRestApi/resources/11.13.18.05/absences"
     headers = {
         'Authorization': 'Basic ' + str(baseencode),
         'Content-Type': 'application/json'
@@ -38,7 +43,7 @@ def handle_form_data():
     reason = data['reason']
     start_date = data['startDate']
     end_date = data['endDate']
-    url = "https://fa-equm-test-saasfaprod1.fa.ocs.oraclecloud.com/hcmRestApi/resources/11.13.18.05/absences"
+    url = str(baseurl)+"/hcmRestApi/resources/11.13.18.05/absences"
     headers = {
         'Authorization': 'Basic ' + str(baseencode),
         'Content-Type': 'application/json'
@@ -63,9 +68,9 @@ def handle_form_data():
   
 @app.route('/leavelist', methods=['GET'])
 def handle_leavelist_data():
-    url = "https://fa-equm-test-saasfaprod1.fa.ocs.oraclecloud.com/hcmRestApi/resources/11.13.18.05/absences"
+    url = str(baseurl)+"/hcmRestApi/resources/11.13.18.05/absences"
     headers = {
-        'Authorization': 'Basic RVlBRE1JTi5IQ006UGFzc3dvcmRAMTIz'
+        'Authorization': 'Basic ' + str(baseencode)
     }
     response = requests.get(url, headers=headers)
     data = response.json()
@@ -76,14 +81,14 @@ def handle_leavelist_data():
         absenceStatusCd = item['absenceStatusCd']
         approvalStatusCd = item['approvalStatusCd']
         startDate = item['startDate']
-        duration = item['duration']
+        absencereason = item['absenceReason']
         endDate = item['endDate']
 
         leave_item = {
             'absenceStatusCd': absenceStatusCd,
             'approvalStatusCd': approvalStatusCd,
             'startDate': startDate,
-            'duration': duration,
+            'absencereason': absencereason,
             'endDate': endDate
         }
 
@@ -94,6 +99,20 @@ def handle_leavelist_data():
     
     else: 
         return jsonify({"status":"error"})
+
+@app.route('/persondetails', methods=['GET'])
+def handle_person_data():
+    url = str(baseurl)+"/hcmRestApi/resources/11.13.18.05/publicWorkers?q=PersonNumber="+str(username)
+    headers = {
+        'Authorization': 'Basic ' + str(baseencode),
+        'Content-Type': 'application/json'
+    }
+    response = requests.request("GET", url, headers=headers)
+    data = response.json()
+    personname = data['items'][0]['DisplayName']
+    orcname = data['items'][0]['Username']
+    return jsonify({"personname":personname,"orcname":orcname})
+   
 
 
 if __name__ == '__main__':

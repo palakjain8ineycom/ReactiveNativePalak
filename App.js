@@ -1,14 +1,13 @@
-
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
-import HomeScreen from './Screens/HomeScreen';
-import LoginScreen from './Screens/LoginScreen';
-import ChatBot from './Screens/ChatBot';
-import LeaveApplication from './Screens/LeaveApplication';
-import LeaveList from './Screens/LeaveList';
-import { StyleSheet, Image, TouchableOpacity, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import React from "react";
+import HomeScreen from "./Screens/HomeScreen";
+import LoginScreen from "./Screens/LoginScreen";
+import ChatBot from "./Screens/ChatBot";
+import LeaveApplication from "./Screens/LeaveApplication";
+import LeaveList from "./Screens/LeaveList";
+import { StyleSheet, Image, TouchableOpacity, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 const Stack = createStackNavigator();
 
@@ -16,7 +15,7 @@ const LogoTitle = () => {
   return (
     <Image
       style={{ width: 40, height: 40, marginLeft: 10 }}
-      source={require('./assets/EY-white-logo.png')}
+      source={require("./assets/LogoIcon2.png")}
     />
   );
 };
@@ -25,7 +24,7 @@ const BackAndLogoButtons = ({ navigation }) => {
   return (
     <View style={styles.headerButtons}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color="#fff" />
+        <Ionicons name="arrow-back" size={24} color="#000" />
       </TouchableOpacity>
     </View>
   );
@@ -34,10 +33,10 @@ const BackAndLogoButtons = ({ navigation }) => {
 const LogoutButton = ({ navigation }) => {
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate('Login Page')}
+      onPress={() => navigation.navigate("Login Page")}
       style={styles.headerButtons}
     >
-      <Ionicons name="exit" size={24} color="#fff" />
+      <Ionicons name="exit" size={24} color="#000" />
     </TouchableOpacity>
   );
 };
@@ -48,11 +47,11 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={({ navigation }) => ({
-            headerTitleAlign: 'center',
+            headerTitleAlign: "center",
             headerLeft: () => <LogoTitle />,
             headerStyle: styles.header,
             headerTitleStyle: styles.headerTitle,
-            headerTintColor: '#fff',
+            headerTintColor: "#000",
             headerRight: () => <LogoutButton navigation={navigation} />,
           })}
         >
@@ -65,17 +64,25 @@ export default function App() {
             name="Home"
             component={HomeScreen}
             options={{
-              title: 'MyAssist',
+              title: "Absentia",
+              headerTintColor: "#000",
+              // backgroundColor:"#30E3CA"
+              // shadowColor: "#000",
+              // shadowOffset: {
+              //   width: 1,
+              //   height: 1,
+              // },
+              // shadowOpacity: 0.25,
+              // shadowRadius: 2,
+              // elevation: 5,
             }}
           />
           <Stack.Screen
             name="Leave Application"
             component={LeaveApplication}
             options={({ navigation }) => ({
-              headerTitle: 'Apply Leave',
-              headerLeft: () => (
-                <BackAndLogoButtons navigation={navigation} />
-              ),
+              headerTitle: "Apply Leave",
+              headerLeft: () => <BackAndLogoButtons navigation={navigation} />,
               headerRight: () => <LogoutButton navigation={navigation} />,
             })}
           />
@@ -83,10 +90,8 @@ export default function App() {
             name="ChatBot"
             component={ChatBot}
             options={({ navigation }) => ({
-              headerTitle: 'Chatbot',
-              headerLeft: () => (
-                <BackAndLogoButtons navigation={navigation} />
-              ),
+              headerTitle: "Chatbot",
+              headerLeft: () => <BackAndLogoButtons navigation={navigation} />,
               headerRight: () => <LogoutButton navigation={navigation} />,
             })}
           />
@@ -94,10 +99,8 @@ export default function App() {
             name="Leave List"
             component={LeaveList}
             options={({ navigation }) => ({
-              headerTitle: 'My Leaves',
-              headerLeft: () => (
-                <BackAndLogoButtons navigation={navigation} />
-              ),
+              headerTitle: "My Leaves",
+              headerLeft: () => <BackAndLogoButtons navigation={navigation} />,
               headerRight: () => <LogoutButton navigation={navigation} />,
             })}
           />
@@ -110,54 +113,14 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    elevation: 3, 
+    backgroundColor: "#fff",
+    elevation: 3, // add elevation for shadow effect
   },
   header: {
-    backgroundColor: '#333333',
+    backgroundColor: "#CBF1F5",
   },
   headerTitle: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 20,
   },
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { NavigationContainer } from '@react-navigation/native';
-// import { createStackNavigator } from '@react-navigation/stack';
-// import React from 'react';
-// import HomeScreen from './Screens/HomeScreen';
-// import LoginScreen from './Screens/LoginScreen';
-// import ChatBot from './Screens/ChatBot';
-// import LeaveApplication from './Screens/LeaveApplication';
-// import LeaveList from './Screens/LeaveList';
-
-// const Stack = createStackNavigator();
-
-// export default function App() {
-//   return (
-//     <NavigationContainer>
-//       <Stack.Navigator>
-//         <Stack.Screen name="Login Page" component={LoginScreen} />
-//         <Stack.Screen name="Home" component={HomeScreen} />
-//         <Stack.Screen name="Leave Application" component={LeaveApplication} />
-//         <Stack.Screen name="ChatBot" component={ChatBot} />
-//         <Stack.Screen name="Leave List" component={LeaveList} />
-//       </Stack.Navigator>
-//     </NavigationContainer>
-//   );
-// }
+});

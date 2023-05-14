@@ -1,31 +1,46 @@
-import React from 'react';
-import { Animated, View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
-function TopBar({ navigation }) {
+import { Animated, View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React, { useState ,useEffect} from "react";
+
+function TopBar({ navigation, personName }) {
   return (
-    <View style={styles.topBar}>
+    <View style={styles.TopBar}>
+      <Text style={styles.title}>Welcome, {personName} !</Text>
     </View>
-  );
+);
 }
 
+
 const HomeScreen = ({ navigation }) => {
+
+  const [personName, setPersonName] = useState("");
+
+  useEffect(() => {
+    fetch('http://192.168.29.245:3000/persondetails', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(response => response.json())
+      .then(data => {
+        setPersonName(data['personname']);
+      })
+  }, []);
+
   return (
     <View style={styles.container}>
-      <TopBar navigation={navigation} />
+      <TopBar navigation={navigation} personName={personName} />
       <View style={styles.tilesContainer}>
         <TouchableOpacity style={styles.tile} onPress={() => navigation.navigate('Leave Application')}>
-        <Text style={styles.tileText}>Create Leave</Text>
-          <Image source={require("./assets/createleave.png")} style={[styles.tile, { width: 150, height: 150 }]} />
-    
+          <Image source={require("./assets/createleave.png")} style={[styles.tile, { width: 150, height: 150,  resizeMode: 'contain',  marginBottom:0 ,marginVertical:20}]} />
+          <Text style={styles.tileText}>Apply Leave</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tile} onPress={() => navigation.navigate('Leave List')}>
-        <Text style={styles.tileText}>My Leaves</Text>
-          <Image source={require("./assets/myleave.png")} style={[styles.tile, { width: 150, height: 150 }]}/>
-          
+          <Image source={require("./assets/myleave.png")} style={[styles.tile, { width: 150, height: 150,resizeMode: 'contain',  marginBottom:0 ,marginVertical:20 }]}/>
+          <Text style={styles.tileText}>My Leaves</Text>
         </TouchableOpacity>
       </View>
       <TouchableOpacity style={[styles.tile, styles.chatbotTile]} onPress={() => navigation.navigate('ChatBot')}>
-        <Image source={require("./assets/cbot.png")} style={styles.chatbotImage} />
+        <Image source={require("./assets/chatbot2.png")} style={styles.chatbotImage} />
       </TouchableOpacity>
     </View>
   );
@@ -34,80 +49,101 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  topBar: {
+
+  TopBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 40,
+    marginTop:-80,
     marginBottom: 20,
     paddingHorizontal: 20,
     width: '100%',
-    backgroundColor:'#333333'
+    height:'7%',
+    backgroundColor:'#11999E',
+    fontSize:1,
+    marginVertical:1,
+    
+    
   },
+  
+
   logo: {
     width: 50,
     height: 50,
     marginRight: 10,
   },
   title: {
-    fontSize: 28,
+    fontSize: 15,
     fontWeight: 'bold',
-    color: '#000',
+    color: 'white',
+    marginVertical:1,
+    // backgroundColor:'grey'
+    marginHorizontal:10,
+    alignItems:'center',
+    fontStyle:'italic',
+    
+    
   },
   tilesContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '80%',
+    width: '100%',
     marginBottom: 100,
+    
 
   },
   tile: {
-    width: '50%',
-    height: 50,
-    backgroundColor: '#000000',
-    borderRadius: 5,
+    width: 150,
+    height: 150,
+    backgroundColor: '#fff',
+    borderRadius: 75, // Half of width or height
     shadowColor: '#000',
     shadowOffset: {
-      width: 10,
-      height: 12,
+      width: 1,
+      height: 1,
     },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    // elevation: 5,
-    marginVertical: 10,
-    marginHorizontal:10,
+    shadowRadius: 2,
+    elevation: 5,
+    marginVertical: 50,
+    marginHorizontal: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  
   tileText: {
     fontSize: 15,
     fontWeight: 'bold',
     color: 'black',
-     marginVertical: 5,
-    // marginHorizontal:10,
+    marginVertical: 1,
+    marginHorizontal:5,
     textAlign:'center',
     flexWrap: 'wrap', 
 
   },
+  
   chatbotTile: {
     position: 'absolute',
     bottom: 20,
     right: 20,
-    backgroundColor: '#ffe600',
+    backgroundColor: '#000',
     borderRadius: 50,
     width: 70,
     height: 70,
     alignItems: 'center',
     justifyContent: 'center',
+    marginVertical:10,
+    marginRight:1,
   },
+
   chatbotImage: {
-    width: 40,
-    height: 40,
+    width: 90,
+    height: 90,
   },
 
   logoutButton: {
@@ -127,111 +163,3 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
-
-
-
-
-
-
-
-
-
-
-// import React from 'react';
-// import { Animated, View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-
-// function Logo() {
-//   return <Image source={require("./assets/logo.png")} style={styles.logo} />;
-// }
-
-// function TopBar() {
-//   return (
-//     <View style={styles.topBar}>
-//       <Logo />
-//       <Text style={styles.title}>Leave Application</Text>
-//       <Text style={styles.title}>My Leaves</Text>
-//     </View>
-//   );
-// }
-
-// const HomeScreen = ({ navigation }) => {
-//   return (
-//     <View style={styles.container}>
-//       <TouchableOpacity style={styles.tile} onPress={() => navigation.navigate('Leave Application')}>
-//         <Text style={styles.tileText}>Leave Application</Text>
-//       </TouchableOpacity>
-//       <TouchableOpacity style={styles.tile} onPress={() => navigation.navigate('Leave List')}>
-//         <Text style={styles.tileText}>My Leaves</Text>
-//       </TouchableOpacity>
-//       <TouchableOpacity style={[styles.tile, styles.chatbotTile]} onPress={() => navigation.navigate('ChatBot')}>
-//         <Image source={require("./assets/cbot.png")} style={styles.chatbotImage} />
-//       </TouchableOpacity>
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#F5F5F5',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   topBar: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     marginTop: 40,
-//     marginBottom: 20,
-//     color:"#cccccc",
-//   },
-//   logo: {
-//     width: 50,
-//     height: 50,
-//     marginRight: 10,
-//   },
-//   title: {
-//     fontSize: 28,
-//     fontWeight: 'bold',
-//     color: '#000',
-//   },
-//   tile: {
-//     width: '80%',
-//     height: 150,
-//     backgroundColor: '#ffe600',
-//     borderRadius: 10,
-//     shadowColor: '#000',
-//     shadowOffset: {
-//       width: 0,
-//       height: 2,
-//     },
-//     shadowOpacity: 0.25,
-//     shadowRadius: 3.84,
-//     elevation: 5,
-//     marginVertical: 10,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   tileText: {
-//     fontSize: 24,
-//     fontWeight: 'bold',
-//     color: 'black',
-//   },
-//   chatbotTile: {
-//     position: 'absolute',
-//     bottom: 20,
-//     right: 20,
-//     backgroundColor: '#ffe600',
-//     borderRadius: 50,
-//     width: 70,
-//     height: 70,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   chatbotImage: {
-//     width: 40,
-//     height: 40,
-//   },
-// });
-
-// export default HomeScreen;
