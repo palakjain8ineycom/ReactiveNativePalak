@@ -8,6 +8,8 @@ import LeaveApplication from "./Screens/LeaveApplication";
 import LeaveList from "./Screens/LeaveList";
 import { StyleSheet, Image, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import MyTasks from "./Screens/MyTasks";
+import Time from "./Screens/Time"
 
 const Stack = createStackNavigator();
 
@@ -100,6 +102,24 @@ export default function App() {
             component={LeaveList}
             options={({ navigation }) => ({
               headerTitle: "My Leaves",
+              headerLeft: () => <BackAndLogoButtons navigation={navigation} />,
+              headerRight: () => <LogoutButton navigation={navigation} />,
+            })}
+          />
+          <Stack.Screen
+            name="My Tasks"
+            component={MyTasks}
+            options={({ navigation }) => ({
+              headerTitle: "My Tasks",
+              headerLeft: () => <BackAndLogoButtons navigation={navigation} />,
+              headerRight: () => <LogoutButton navigation={navigation} />,
+            })}
+          />
+          <Stack.Screen
+            name="Time"
+            component={Time}
+            options={({ navigation }) => ({
+              headerTitle: "Time In/ Out",
               headerLeft: () => <BackAndLogoButtons navigation={navigation} />,
               headerRight: () => <LogoutButton navigation={navigation} />,
             })}

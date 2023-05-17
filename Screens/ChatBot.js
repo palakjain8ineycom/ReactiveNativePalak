@@ -1,190 +1,312 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, TextInput, Button, Text } from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  Text,
+  StyleSheet,
+} from 'react-native';
+import axios from 'axios';
 
-const API_KEY = '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';
-
-const systemMessage = {
-  role: 'system',
-  content:
-    "Strictly follow these commands: 1)If you're Asked any oracle/ leave/ employee related questions, redirect to this website: docs.oracle.comm . 2) If you're Asked any vulgar questions, say the prompt 'It's offensive' 3) If you're asked any generic question, answer in ChatGPT way",
-};
-
-export default function App() {
-  const [messages, setMessages] = useState([
-    {
-      message: "Hello, I'm ChatBot! Ask me anything!",
-      sentTime: 'just now',
-      sender: 'ChatGPT',
-    },
+const ChatBot = () => {
+  const [inputText, setInputText] = useState('');
+  const [chatMessages, setChatMessages] = useState([
+    { role: 'assistant', content: 'Welcome to our app! I am your friendly AI assistant. How can I assist you today?' },
   ]);
-  const [isTyping, setIsTyping] = useState(false);
-  const [inputMessage, setInputMessage] = useState('');
 
-  const handleSend = () => {
-    if (inputMessage.trim() === '') return;
+  const handleSendMessage = async () => {
+    if (inputText.trim() === '') return;
 
-    const newMessage = {
-      message: inputMessage,
-      sender: 'user',
-      sentTime: new Date().toLocaleTimeString(),
-    };
+    const newChatMessages = [
+      ...chatMessages,
+      { role: 'user', content: inputText },
+    ];
 
-    setMessages([...messages, newMessage]);
-    setInputMessage('');
-    setIsTyping(true);
-    processMessageToChatGPT([...messages, newMessage]);
-  };
+    setChatMessages(newChatMessages);
+    setInputText('');
 
-  const processMessageToChatGPT = async (chatMessages) => {
     try {
-      // Simulating an API call or any other logic to get the AI response
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${API_KEY}`,
-        },
-        body: JSON.stringify(chatMessages),
+      const response = await axios.post('http://192.168.29.245:3000/chat', {
+        message: inputText,
       });
-  
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}: ${response.statusText}`);
-      }
-  
-      const data = await response.json();
-      const aiResponse = data.response;
-  
-      const newMessage = {
-        message: aiResponse,
-        sender: 'ChatGPT',
-        sentTime: new Date().toLocaleTimeString(),
-      };
-  
-      setMessages([...chatMessages, newMessage]);
-      setIsTyping(false);
+
+      const messageContent = response.data;
+
+      const newApiMessages = [
+        ...newChatMessages,
+        { role: 'assistant', content: messageContent },
+      ];
+
+      setChatMessages(newApiMessages);
     } catch (error) {
-      console.error('Error occurred:', error);
+      console.error(error);
     }
   };
-  
+
+  const renderChatMessage = ({ item }) => {
+    const isUserMessage = item.role === 'user';
+    const messageContainerStyle = isUserMessage
+      ? styles.userMessageContainer
+      : styles.assistantMessageContainer;
+    const messageTextStyle = isUserMessage
+      ? styles.userMessageText
+      : styles.assistantMessageText;
+
+    return (
+      <View style={[styles.messageContainer, messageContainerStyle]}>
+        <Text style={messageTextStyle}>{item.content}</Text>
+      </View>
+    );
+  };
 
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.messageList}>
-        {messages.map((message, index) => (
-          <View
-            key={index}
-            style={[
-              styles.message,
-              message.sender === 'user' ? styles.userMessage : styles.aiMessage,
-            ]}
-          >
-            <Text style={styles.messageText}>{message.message}</Text>
-            <Text style={styles.sentTime}>{message.sentTime}</Text>
-          </View>
-        ))}
-        {isTyping && (
-          <View style={styles.typingIndicator}>
-            <Text>ChatBot is typing</Text>
-          </View>
-        )}
-      </ScrollView>
-      <View style={styles.messageInput}>
+    <View style={{ flex: 1 }}>
+      <FlatList
+        data={chatMessages}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={renderChatMessage}
+      />
+      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10 }}>
         <TextInput
-          style={styles.inputField}
-          placeholder="Type message here"
-          value={inputMessage}
-          onChangeText={setInputMessage}
+          style={styles.userInput}
+          value={inputText}
+          onChangeText={setInputText}
+          placeholder="Type your message..."
+          placeholderTextColor="#A9A9A9"
+          autoCapitalize="none"
+          autoCorrect={false}
+          multiline
         />
-        <Button title="Send" onPress={handleSend} color="#40514E"/>
+        <TouchableOpacity style={styles.submitButton} onPress={handleSendMessage}>
+          <Text style={styles.submitButtonText}>Send</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
-}
+};
 
+export default ChatBot;
+
+// Styles
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-  },
-  messageList: {
-    padding: 16,
-  },
-  message: {
+  messageContainer: {
+    padding: 10,
+    marginBottom: 10,
+    maxWidth: '80%',
     borderRadius: 8,
-    marginBottom: 8,
-    padding: 8,
   },
-  userMessage: {
-    backgroundColor: '#71C9CE',
-    alignSelf: 'flex-end',
-  },
-  aiMessage: {
-    backgroundColor: '#E4F9F5',
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  messageText: {
-    fontSize: 16,
-  },
-  sentTime: {
-    fontSize: 12,
-    color: '#888888',
-    marginTop: 4,
-    alignSelf: 'flex-end',
-  },
-  messageInput: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-  },
-  inputField: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+  userMessageContainer: {
+    marginTop: 10,
     marginRight: 10,
-    fontSize: 16,
-    color: '#333333',
+    alignSelf: 'flex-end',
+    backgroundColor: '#11999E',
   },
-  typingIndicator: {
-    marginTop: 8,
+  assistantMessageContainer: {
     alignSelf: 'flex-start',
-    paddingLeft: 16,
+    backgroundColor: '#CBF1F5',
+    marginLeft: 10,
+    marginTop:10,
   },
- 
-
+  userMessageText: {
+    color: 'white',
+  },
+  assistantMessageText: {
+    color: 'black',
+  },
+  userInput: {
+    flex: 1,
+    padding: 10,
+    color: 'black',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 8,
+    marginRight: 0,
+    marginBottom: 10,
+    marginLeft: 10,
+    height: 40,
+    fontSize: 16,
+  },
+  submitButton: {
+    backgroundColor: '#40514E',
+    borderRadius: 8,
+    padding: 10,
+    marginLeft: 10,
+    marginBottom: 10,
+  },
+  submitButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
+ 
 
 
 
+// Use as backup
+// import React, { useState } from 'react';
+// import { StyleSheet, View, ScrollView, TextInput, Button, Text } from 'react-native';
 
+// const API_KEY = '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';
 
+// const systemMessage = {
+//   role: 'system',
+//   content:
+//     "Strictly follow these commands: 1)If you're Asked any oracle/ leave/ employee related questions, redirect to this website: docs.oracle.comm . 2) If you're Asked any vulgar questions, say the prompt 'It's offensive' 3) If you're asked any generic question, answer in ChatGPT way",
+// };
 
+// export default function App() {
+//   const [messages, setMessages] = useState([
+//     {
+//       message: "Hello, I'm ChatBot! Ask me anything!",
+//       sentTime: 'just now',
+//       sender: 'ChatGPT',
+//     },
+//   ]);
+//   const [isTyping, setIsTyping] = useState(false);
+//   const [inputMessage, setInputMessage] = useState('');
 
+//   const handleSend = () => {
+//     if (inputMessage.trim() === '') return;
 
+//     const newMessage = {
+//       message: inputMessage,
+//       sender: 'user',
+//       sentTime: new Date().toLocaleTimeString(),
+//     };
 
+//     setMessages([...messages, newMessage]);
+//     setInputMessage('');
+//     setIsTyping(true);
+//     processMessageToChatGPT([...messages, newMessage]);
+//   };
 
+//   const processMessageToChatGPT = async (chatMessages) => {
+//     try {
+//       // Simulating an API call or any other logic to get the AI response
+//       const response = await fetch('https://api.openai.com/v1/chat/completions', {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           Authorization: `Bearer ${API_KEY}`,
+//         },
+//         body: JSON.stringify(chatMessages),
+//       });
 
+//       if (!response.ok) {
+//         throw new Error(`API request failed with status ${response.status}: ${response.statusText}`);
+//       }
 
+//       const data = await response.json();
+//       const aiResponse = data.response;
 
+//       const newMessage = {
+//         message: aiResponse,
+//         sender: 'ChatGPT',
+//         sentTime: new Date().toLocaleTimeString(),
+//       };
 
+//       setMessages([...chatMessages, newMessage]);
+//       setIsTyping(false);
+//     } catch (error) {
+//       console.error('Error occurred:', error);
+//     }
+//   };
 
+//   return (
+//     <View style={styles.container}>
+//       <ScrollView contentContainerStyle={styles.messageList}>
+//         {messages.map((message, index) => (
+//           <View
+//             key={index}
+//             style={[
+//               styles.message,
+//               message.sender === 'user' ? styles.userMessage : styles.aiMessage,
+//             ]}
+//           >
+//             <Text style={styles.messageText}>{message.message}</Text>
+//             <Text style={styles.sentTime}>{message.sentTime}</Text>
+//           </View>
+//         ))}
+//         {isTyping && (
+//           <View style={styles.typingIndicator}>
+//             <Text>ChatBot is typing</Text>
+//           </View>
+//         )}
+//       </ScrollView>
+//       <View style={styles.messageInput}>
+//         <TextInput
+//           style={styles.inputField}
+//           placeholder="Type message here"
+//           value={inputMessage}
+//           onChangeText={setInputMessage}
+//         />
+//         <Button title="Send" onPress={handleSend} color="#40514E"/>
+//       </View>
+//     </View>
+//   );
+// }
 
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#fff',
+//     justifyContent: 'center',
+//   },
+//   messageList: {
+//     padding: 16,
+//   },
+//   message: {
+//     borderRadius: 8,
+//     marginBottom: 8,
+//     padding: 8,
+//   },
+//   userMessage: {
+//     backgroundColor: '#71C9CE',
+//     alignSelf: 'flex-end',
+//   },
+//   aiMessage: {
+//     backgroundColor: '#E4F9F5',
+//     alignSelf: 'flex-start',
+//     borderWidth: 1,
+//     borderColor: '#E0E0E0',
+//   },
+//   messageText: {
+//     fontSize: 16,
+//   },
+//   sentTime: {
+//     fontSize: 12,
+//     color: '#888888',
+//     marginTop: 4,
+//     alignSelf: 'flex-end',
+//   },
+//   messageInput: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     backgroundColor: '#FFFFFF',
+//     paddingVertical: 8,
+//     paddingHorizontal: 16,
+//   },
+//   inputField: {
+//     flex: 1,
+//     borderWidth: 1,
+//     borderColor: '#E0E0E0',
+//     borderRadius: 20,
+//     paddingHorizontal: 12,
+//     paddingVertical: 8,
+//     marginRight: 10,
+//     fontSize: 16,
+//     color: '#333333',
+//   },
+//   typingIndicator: {
+//     marginTop: 8,
+//     alignSelf: 'flex-start',
+//     paddingLeft: 16,
+//   },
 
-
-
-
-
-
-
+// });
 
 // import React, { useState } from 'react';
 // import { Animated, StyleSheet, View } from 'react-native';
@@ -196,8 +318,6 @@ const styles = StyleSheet.create({
 //   MessageInput,
 //   TypingIndicator,
 // } from '@chatscope/chat-ui-kit-react';
-
-
 
 // const API_KEY = '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';
 // const systemMessage = {
@@ -378,21 +498,6 @@ const styles = StyleSheet.create({
 //   },
 // });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // import React, { useState } from 'react';
 // import { Animated, StyleSheet, View } from 'react-native';
 // import {
@@ -404,8 +509,6 @@ const styles = StyleSheet.create({
 //   TypingIndicator,
 // } from '@chatscope/chat-ui-kit-react';
 // import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
-
-
 
 // const API_KEY = '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';
 // const systemMessage = {
@@ -546,4 +649,3 @@ const styles = StyleSheet.create({
 //       fontWeight: 'bold',
 //     },
 //   });
-  

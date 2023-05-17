@@ -20,14 +20,16 @@ const LeaveList = () => {
   };
 
   return (
-    <ScrollView horizontal={true} vertical={true}>
+    <ScrollView  vertical={true}>
+      <ScrollView  horizontal={true}>
+      
       <View>
         {leaveData.length > 0 ? (
-          <Table>
+          <Table style={{marginTop:10, marginLeft:10, marginRight: 10}}>
             <Row
               data={['Start Date', 'End Date', 'Absence Reason', 'Absence Status', 'Approval Status']}
               style={{ height: 40, backgroundColor: '#30E3CA' }}
-              textStyle={{ margin: 5, fontWeight: 'bold', textAlign: 'center' }}
+              textStyle={{ margin: 5, fontWeight: 'bold' }}
               widthArr={[100, 100, 120, 120, 120]} 
             />
             {leaveData.map((item, index) => (
@@ -40,7 +42,7 @@ const LeaveList = () => {
                   item.absenceStatusCd,
                   item.approvalStatusCd,
                 ]}
-                textStyle={{ margin: 5, textAlign: 'center' }}
+                textStyle={{ margin: 5 }}
                 widthArr={[100, 100, 120, 120, 120]} 
                 style={{ height: 40,borderColor:'grey',borderWidth:0.5 }}
               />
@@ -50,6 +52,7 @@ const LeaveList = () => {
           <Text>Loading My Leaves data...</Text>
         )}
       </View>
+      </ScrollView>
     </ScrollView>
   );
 };
