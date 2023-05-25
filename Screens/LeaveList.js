@@ -11,7 +11,7 @@ const LeaveList = () => {
 
   const fetchLeaveListData = async () => {
     try {
-      const response = await fetch('http://192.168.29.245:3000/leavelist');
+      const response = await fetch('http://192.168.29.245:5000/leavelist');
       const data = await response.json();
       setLeaveData(data);
     } catch (error) {

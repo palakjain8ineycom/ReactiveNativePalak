@@ -9,7 +9,9 @@ import LeaveList from "./Screens/LeaveList";
 import { StyleSheet, Image, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import MyTasks from "./Screens/MyTasks";
-import Time from "./Screens/Time"
+import Time from "./Screens/Time";
+import Helpdesk from "./Screens/Helpdesk";
+import SRdetails from "./Screens/SRdetails";
 
 const Stack = createStackNavigator();
 
@@ -120,6 +122,24 @@ export default function App() {
             component={Time}
             options={({ navigation }) => ({
               headerTitle: "Time In/ Out",
+              headerLeft: () => <BackAndLogoButtons navigation={navigation} />,
+              headerRight: () => <LogoutButton navigation={navigation} />,
+            })}
+          />
+          <Stack.Screen
+            name="Helpdesk"
+            component={Helpdesk}
+            options={({ navigation }) => ({
+              headerTitle: "Helpdesk",
+              headerLeft: () => <BackAndLogoButtons navigation={navigation} />,
+              headerRight: () => <LogoutButton navigation={navigation} />,
+            })}
+          />
+          <Stack.Screen
+            name="SRdetails"
+            component={SRdetails}
+            options={({ navigation }) => ({
+              headerTitle: "SRDetails",
               headerLeft: () => <BackAndLogoButtons navigation={navigation} />,
               headerRight: () => <LogoutButton navigation={navigation} />,
             })}

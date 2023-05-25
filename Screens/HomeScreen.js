@@ -2,6 +2,8 @@
 import { Animated, View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import React, { useState ,useEffect} from "react";
 
+
+
 function TopBar({ navigation, personName }) {
   return (
     <View style={styles.TopBar}>
@@ -16,7 +18,7 @@ const HomeScreen = ({ navigation }) => {
   const [personName, setPersonName] = useState("");
 
   useEffect(() => {
-    fetch('http://192.168.29.245:3000/persondetails', {
+    fetch('http://192.168.29.245:5000/persondetails', {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     })
@@ -55,6 +57,12 @@ const HomeScreen = ({ navigation }) => {
               <Image source={require("./assets/timein.png")} style={[styles.tile, { width: 100, height: 100, resizeMode: 'contain', marginBottom: 0, marginVertical: 20 }]} />
               <Text style={styles.tileText}>Time In/Out</Text>
             </TouchableOpacity>
+            </View>
+            <View style={styles.rowContainer}>
+            <TouchableOpacity style={styles.tile} onPress={() => navigation.navigate('Helpdesk')}>
+              <Image source={require("./assets/helpdesk.png")} style={[styles.tile, { width: 100, height: 100, resizeMode: 'contain', marginBottom: 0, marginVertical: 20 }]} />
+              <Text style={styles.tileText}>Helpdesk</Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </View>
@@ -63,8 +71,6 @@ const HomeScreen = ({ navigation }) => {
       </TouchableOpacity>
     </View>
   );
-  
-  
 };
 
 const styles = StyleSheet.create({
@@ -79,7 +85,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop:-300,
+    marginTop:-110,
     // marginBottom: 20,
     paddingHorizontal: 20,
     width: '100%',
@@ -87,7 +93,7 @@ const styles = StyleSheet.create({
     backgroundColor:'#11999E',
     fontSize:1,
     marginVertical:1,
-    
+   
     
   },
   

@@ -23,7 +23,7 @@ export default function LoginScreen() {
 
     setIsLoading(true);
 
-    fetch('http://192.168.29.245:3000/login', {
+    fetch('http://192.168.29.245:5000/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

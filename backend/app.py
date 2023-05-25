@@ -347,7 +347,7 @@ def handle_chat_data():
 
     message = data["message"]
 
-    API_KEY = "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"
+    API_KEY = "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"
 
     SYSTEM_MESSAGE = {
         "role": "system",
@@ -383,8 +383,119 @@ def handle_chat_data():
 
     return message_content
 
-    # return jsonify({'response': chat_response})
+
+# return jsonify({'response': chat_response})
+
+
+@app.route("/helpdesk", methods=["GET"])
+def get_helpdesk_data():
+    url = baseurl + "/crmRestApi/resources/11.13.18.05/serviceRequests"
+
+    headers = {"Authorization": "Basic " + str(baseencode)}
+
+    response = requests.get(url, headers=headers)
+
+    data = response.json()
+
+    helpdesk_tickets = []
+
+    for item in data["items"]:
+        reference_number = item["SrNumber"]
+
+        # severity = item['SeverityCdMeaning']
+
+        title = item["Title"]
+
+        # category = item['CategoryName']
+
+        creation_date = item["CreationDate"]
+
+        # last_updated_date = item['LastUpdateDate']
+
+        Status = item["StatusCdMeaning"]
+
+        assigned_to = item["AssigneePersonName"]
+
+        ticket = {
+            "SrNumber": reference_number,
+            # 'SeverityCdMeaning': severity,
+            "Title": title,
+            # 'CategoryName': category,
+            "CreationDate": creation_date,
+            # 'LastUpdateDate': last_updated_date,
+            "StatusCdMeaning": Status,
+            "AssigneePersonName": assigned_to,
+        }
+
+        helpdesk_tickets.append(ticket)
+
+    helpdesk_tickets_json = json.dumps(helpdesk_tickets)
+
+    if response.status_code < 300 and response.status_code > 150:
+        return helpdesk_tickets_json
+
+    else:
+        return jsonify({"status": "error"})
+
+
+@app.route("/srdetails", methods=["GET", "POST"])
+def handle_sr_details():
+    if request.method == "GET":
+        srNumber = request.args.get("SrNumber")
+
+        url = (
+            baseurl
+            + "/crmRestApi/resources/11.13.18.05/serviceRequests?q=SrNumber=="
+            + str(srNumber)
+        )
+
+        headers = {"Authorization": "Basic " + str(baseencode)}
+
+        response = requests.get(url, headers=headers)
+
+        data = response.json()
+
+        sr_details = []
+
+        for item in data["items"]:
+            title = item["Title"]
+
+            reportedBy = item["ReportedByPartyName"]
+
+            severity = item["SeverityCdMeaning"]
+
+            businessUnit = item["BusinessUnitName"]
+
+            info = {
+                "Title": title,
+                "ReportedByPartyName": reportedBy,
+                "SeverityCdMeaning": severity,
+                "BusinessUnitName": businessUnit,
+            }
+
+            sr_details.append(info)
+
+        if 150 < response.status_code < 300:
+            return jsonify(sr_details)
+
+        else:
+            return jsonify({"status": "error"})
+
+    elif request.method == "POST":
+        # Handle the POST request here
+
+        # Modify the code to process the data sent in the request body
+
+        data = request.get_json()
+
+        srNumber = data["SrNumber"]
+
+        # Process the data and return the response accordingly
+
+        return jsonify({"message": "POST request received"})
+
+
 
 
 if __name__ == "__main__":
-    app.run(host="192.168.29.245", port=3000, debug=True)
+    app.run(host="192.168.29.245", port=5000, debug=True)

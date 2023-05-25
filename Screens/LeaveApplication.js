@@ -27,7 +27,7 @@ function LeaveForm() {
   );
 
   useEffect(() => {
-    fetch('http://192.168.29.245:3000/persondetails', {
+    fetch('http://192.168.29.245:5000/persondetails', {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     })
@@ -40,7 +40,7 @@ function LeaveForm() {
   
 
   const handleSubmit = () => {
-    fetch("http://192.168.29.245:3000/leavepost",
+    fetch("http://192.168.29.245:5000/leavepost",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

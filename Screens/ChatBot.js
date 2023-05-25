@@ -27,7 +27,7 @@ const ChatBot = () => {
     setInputText('');
 
     try {
-      const response = await axios.post('http://192.168.29.245:3000/chat', {
+      const response = await axios.post('http://192.168.29.245:5000/chat', {
         message: inputText,
       });
 
